@@ -1,0 +1,21 @@
+#! /bin/sh
+set -x
+DELIMITERS="[ -,_]"
+CHOSEN_DELIMITER="-"
+# that is, which characters will be allow, after all else is handled
+INVALID_CHARS="[^a-zA-Z0-9\.$CHOSEN_DELIMITER]"
+
+norm_name(){
+	#TODO: i would **love** to add comments here, but bash won't let me. Without stupid PIA workarounds that is
+	echo $1 | \
+	tr '[:upper:]' '[:lower:]' | \
+	sed \
+	-e "s/$DELIMITERS\+/$CHOSEN_DELIMITER/g" \
+	-e "s/ö/oe/g" -e "s/ä/ae/g" -e "s/ü/ue/g" -e "s/ß/ss/g" \
+	-e "s/$INVALID_CHARS//g" 
+}
+
+for input_path in "$@"
+do
+	echo \"$input_path\"  $(norm_name "$input_path")
+done
